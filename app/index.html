@@ -1,0 +1,117 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Leonida Trophy Compass — all 55 GTA VI trophies, cited guides, roadmap, offline tracker</title>
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<header class="masthead">
+  <div class="masthead-text">
+    <p class="eyebrow">Grand Theft Auto VI &middot; PlayStation 5 &middot; 55 trophies</p>
+    <h1>Leonida Trophy Compass</h1>
+    <p class="promise">Every trophy with its official name, description and grade, a guide in our own words with a named source beside every fact, an 8-stage road to platinum, the one potentially missable trophy flagged — and a tracker that works fully offline.</p>
+    <p class="meta-line">List as shown on PSN, taken 2026-11-18 from Exophase and cross-checked with PSNProfiles and TrueAchievements (via PlanetGTA6). No Rockstar artwork, no copied guide text, no network requests.</p>
+  </div>
+  <aside class="progress-card" id="progressCard" aria-label="Progress to platinum">
+    <p class="progress-label">Progress to platinum</p>
+    <p class="progress-big"><span id="earnedCount">0</span><span class="progress-of"> / 55</span></p>
+    <p class="progress-pct" id="earnedPct">0% earned</p>
+    <div class="progress-bar"><div class="progress-fill" id="progressFill"></div></div>
+    <ul class="grade-counts">
+      <li><span class="grade-dot platinum"></span>Platinum <b id="countPlatinum">0/1</b></li>
+      <li><span class="grade-dot gold"></span>Gold <b id="countGold">0/2</b></li>
+      <li><span class="grade-dot silver"></span>Silver <b id="countSilver">0/6</b></li>
+      <li><span class="grade-dot bronze"></span>Bronze <b id="countBronze">0/46</b></li>
+    </ul>
+    <p class="roadmap-note" id="roadmapNote">Roadmap stage 1 of 8 &middot; story first</p>
+  </aside>
+</header>
+
+<section class="missable-banner" id="missableBanner">
+  <p><strong>One trophy can be missed.</strong> <em>Positive Mental Attitude</em> asks you to meditate at 18 spots across Leonida — and the Chapter 1 balcony spot is reported to disappear after Chapter 1, with no mission replay and no New Game+. Do it in Chapter 1 and keep a Chapter 1 manual save. The community has not confirmed any other missable trophy — see the Missables tab.</p>
+  <button type="button" id="bannerOpen">Open its guide</button>
+</section>
+
+<nav class="tabs" role="tablist" aria-label="Guide sections">
+  <button type="button" class="tab active" data-tab="tracker" role="tab" aria-selected="true">Tracker</button>
+  <button type="button" class="tab" data-tab="roadmap" role="tab" aria-selected="false">Roadmap to Platinum</button>
+  <button type="button" class="tab" data-tab="missables" role="tab" aria-selected="false">Missables</button>
+  <button type="button" class="tab" data-tab="sources" role="tab" aria-selected="false">Sources &amp; method</button>
+</nav>
+
+<main>
+  <section id="tab-tracker" class="tab-panel active">
+    <div class="filter-bar">
+      <input type="search" id="search" placeholder="Search a trophy by name or description…" aria-label="Search trophies">
+      <div class="kind-pills" id="kindPills" role="group" aria-label="Filter by kind">
+        <button type="button" data-kind="all" class="pill active">All 55</button>
+        <button type="button" data-kind="story" class="pill">Story</button>
+        <button type="button" data-kind="missable" class="pill">Missable</button>
+        <button type="button" data-kind="collectibles" class="pill">Collectibles</button>
+        <button type="button" data-kind="activities" class="pill">Activities</button>
+        <button type="button" data-kind="online" class="pill">Online (0)</button>
+      </div>
+      <label class="filter-field">Grade
+        <select id="gradeFilter">
+          <option value="all">All grades</option>
+          <option value="platinum">Platinum</option>
+          <option value="gold">Gold</option>
+          <option value="silver">Silver</option>
+          <option value="bronze">Bronze</option>
+        </select>
+      </label>
+      <label class="toggle" title="Hide hidden trophies until earned"><input type="checkbox" id="spoilerToggle"> Spoiler-safe</label>
+      <label class="toggle"><input type="checkbox" id="earnedOnly"> Earned only</label>
+      <div class="data-buttons">
+        <button type="button" id="exportBtn">Export progress</button>
+        <label class="import-btn">Import progress <input type="file" id="importFile" accept="application/json"></label>
+        <button type="button" id="resetBtn">Reset</button>
+      </div>
+    </div>
+    <p class="filter-summary" id="filterSummary"></p>
+    <div class="tracker-grid">
+      <div class="trophy-list" id="trophyList" role="list"></div>
+      <aside class="detail-panel" id="detailPanel" aria-live="polite">
+        <p class="detail-empty">Pick a trophy to read its guide — every guide names its sources.</p>
+      </aside>
+    </div>
+  </section>
+
+  <section id="tab-roadmap" class="tab-panel">
+    <h2>Roadmap to platinum</h2>
+    <p class="section-intro">Eight stages in play order, built only from the official descriptions and the cited sources. Story first, then strangers, then the open-world work — and the 100% cleanup last, because A Long Road is the gold that usually lands last.</p>
+    <div id="roadmapStages"></div>
+  </section>
+
+  <section id="tab-missables" class="tab-panel">
+    <h2>Missables</h2>
+    <p class="section-intro">Exactly one trophy is reported as potentially missable. Everything else can be earned after the story ends.</p>
+    <div id="missablesBody"></div>
+    <h3>What we do not know yet</h3>
+    <p>PlanetGTA6 (2026-11-19) is blunt about this: there is no reliable list of missable trophies yet, because the game has only just come out. The Chapter 1 meditation spot is the one the guide community — KeenGamer, OutputLag, GTAVibes — agrees on. Beyond it, this guide claims nothing. Keep manual saves before the big story missions anyway; it costs nothing and covers what the community is still confirming.</p>
+  </section>
+
+  <section id="tab-sources" class="tab-panel">
+    <h2>Sources &amp; method</h2>
+    <p class="section-intro">Every guide in this entry is written in our own words. A fact that comes from somewhere else names its source beside it — a cited guide beats an uncited one, however detailed. Nothing here copies another guide's text.</p>
+    <div id="sourcesBody"></div>
+    <h3>Honesty notes</h3>
+    <ul class="honesty">
+      <li>Rockstar has never published an official trophy list on its own channels. The list here reached the public through the PSN tracker databases — Exophase and PSNProfiles, cross-checked with TrueAchievements — and was reported by PlanetGTA6 on 2026-11-18.</li>
+      <li>The 100% completion contents are unpublished. No guide can honestly list them, so the roadmap is built from the official descriptions only.</li>
+      <li>Play times are estimates from reviews (about 60 hours for the story). They are not facts.</li>
+      <li>Cheats are reported by PowerPyx to disable trophies, and GameSpot and PC Gamer report that you cannot save after using one. Rockstar has published nothing on GTA 6 cheats — so never use a cheat on your trophy save.</li>
+      <li>There are 0 online trophies. The Online filter exists because the competition asks for it, and it honestly shows an empty set.</li>
+      <li>Xbox has the same 55 achievements, worth 1,000 Gamerscore in total; A Long Road is the biggest at 100G.</li>
+    </ul>
+  </section>
+</main>
+
+<footer>
+  <p>Leonida Trophy Compass — an unofficial fan guide. Grand Theft Auto, GTA and Leonida are trademarks of their owners; this guide is not affiliated with or endorsed by Rockstar Games. Trophy names and descriptions are shown as PlayStation publishes them. Built for make.fun's gta6-trophy-guide-01 bounty. Works offline; your progress never leaves your browser except through Export.</p>
+</footer>
+<script type="module" src="app.js"></script>
+</body>
+</html>
