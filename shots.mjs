@@ -1,59 +1,108 @@
-// Takes the entry's 4 screenshots from its own running app (headless Chromium),
-// one view each, then converts them to JPEG (quality 82) and checks the gate caps:
-// each ≤256 KiB, long side ≤1280 px, short side ≥480 px.
-// Run with the app served: node serve.ts (http://localhost:8080), then node shots.mjs
-import { execFileSync } from 'node:child_process';
-import { existsSync, mkdirSync, readdirSync, statSync, unlinkSync } from 'node:fs';
+// Take the entry's screenshots in headless Chromium over the DevTools
+// protocol (Node 22+, standard library only: global WebSocket + fetch).
+// Reads shots.json, serves app/ on :8080 first (node serve.ts), then:
+//   node shots.mjs
+// Each shot navigates to its URL at 1280x800 and saves a JPEG next to
+// the repo's screenshots/ folder. Exits non-zero if any shot is missing
+// or over the 256 KiB cap.
+
+import { spawn } from 'node:child_process';
+import { mkdirSync, readFileSync, statSync, writeFileSync } from 'node:fs';
 import { join } from 'node:path';
 import { fileURLToPath } from 'node:url';
 
-const repo = fileURLToPath(new URL('.', import.meta.url));
-const shotsDir = join(repo, 'screenshots');
-const tmpDir = join(repo, '.shots-tmp');
-const chrome = process.env.CHROME_BIN ?? `${process.env.HOME}/.cache/ms-playwright/chromium-1255/chrome-linux64/chrome`;
-const base = 'http://localhost:8080/';
+const here = fileURLToPath(new URL('.', import.meta.url));
+const shots = JSON.parse(readFileSync(join(here, 'shots.json'), 'utf8'));
+const outDir = join(here, 'screenshots');
+mkdirSync(outDir, { recursive: true });
 
-const views = [
-  { file: '1-cover.jpg', hash: '#demo=13&trophy=28', note: 'tracker, progress 13/55, Positive Mental Attitude guide open' },
-  { file: '2-roadmap.jpg', hash: '#tab=roadmap&demo=13', note: '8-stage roadmap to platinum' },
-  { file: '3-spoiler.jpg', hash: '#spoilers=on&grade=silver&demo=13', note: 'spoiler-safe on, silver filter' },
-  { file: '4-sources.jpg', hash: '#tab=sources&demo=13', note: 'sources & method page' },
-];
+const CHROME = process.env.CHROME
+  ?? `${process.env.HOME}/.cache/ms-playwright/chromium-1255/chrome-linux64/chrome`;
+const DEBUG_PORT = 9222;
 
-mkdirSync(tmpDir, { recursive: true });
-for (const view of views) {
-  const png = join(tmpDir, view.file.replace(/\.jpg$/, '.png'));
-  console.log(`shot ${view.file}: ${view.note}`);
-  execFileSync(chrome, [
-    '--headless=new', '--disable-gpu', '--no-sandbox', '--hide-scrollbars',
-    '--force-device-scale-factor=1', '--window-size=1280,800',
-    '--virtual-time-budget=8000', `--screenshot=${png}`, base + view.hash,
-  ], { stdio: 'inherit', timeout: 60000 });
+function sleep(ms) {
+  return new Promise((r) => setTimeout(r, ms));
 }
 
-// Convert to JPEG quality 82 and verify the gate caps with Pillow.
-const convert = `
-from PIL import Image
-import os, sys
-tmp, out = sys.argv[1], sys.argv[2]
-for name in sorted(os.listdir(tmp)):
-    if not name.endswith('.png'):
-        continue
-    src = os.path.join(tmp, name)
-    dst = os.path.join(out, name[:-4] + '.jpg')
-    im = Image.open(src).convert('RGB')
-    im.save(dst, 'JPEG', quality=82)
-    w, h = im.size
-    size = os.path.getsize(dst)
-    long_side, short_side = max(w, h), min(w, h)
-    ok = size <= 262144 and long_side <= 1280 and short_side >= 480
-    print(f"{os.path.basename(dst)}: {w}x{h} {size} bytes {'OK' if ok else 'FAIL'}")
-    if not ok:
-        sys.exit(1)
-`;
-mkdirSync(shotsDir, { recursive: true });
-execFileSync('python3', ['-c', convert, tmpDir, shotsDir], { stdio: 'inherit' });
+async function waitForHttp(url, tries = 30) {
+  for (let i = 0; i < tries; i++) {
+    try {
+      const res = await fetch(url);
+      if (res.ok) return;
+    } catch { /* not up yet */ }
+    await sleep(500);
+  }
+  throw new Error(`DevTools endpoint never came up: ${url}`);
+}
 
-// Clean the temp PNGs so they never land in the repo.
-for (const f of readdirSync(tmpDir)) unlinkSync(join(tmpDir, f));
-console.log('screenshots done:', readdirSync(shotsDir).sort().join(', '));
+const chrome = spawn(CHROME, [
+  '--headless=new',
+  '--no-sandbox',
+  '--disable-gpu',
+  '--hide-scrollbars',
+  '--window-size=1280,800',
+  `--remote-debugging-port=${DEBUG_PORT}`,
+  '--user-data-dir=/tmp/chrome-shots-profile',
+  'about:blank',
+], { stdio: 'ignore' });
+
+try {
+  await waitForHttp(`http://127.0.0.1:${DEBUG_PORT}/json/version`);
+  const targets = await (await fetch(`http://127.0.0.1:${DEBUG_PORT}/json/list`)).json();
+  const page = targets.find((t) => t.type === 'page');
+  if (!page) throw new Error('no page target in Chromium');
+
+  const ws = new WebSocket(page.webSocketDebuggerUrl);
+  await new Promise((resolve, reject) => {
+    ws.onopen = resolve;
+    ws.onerror = (e) => reject(new Error(`WebSocket failed: ${e.message ?? 'unknown'}`));
+  });
+
+  let nextId = 1;
+  const pending = new Map();
+  let loadResolve = null;
+  ws.onmessage = (event) => {
+    const msg = JSON.parse(event.data);
+    if (msg.id && pending.has(msg.id)) {
+      const { resolve, reject } = pending.get(msg.id);
+      pending.delete(msg.id);
+      if (msg.error) reject(new Error(msg.error.message));
+      else resolve(msg.result);
+    }
+    if (msg.method === 'Page.loadEventFired' && loadResolve) {
+      const r = loadResolve;
+      loadResolve = null;
+      r();
+    }
+  };
+  function send(method, params = {}) {
+    const id = nextId++;
+    return new Promise((resolve, reject) => {
+      pending.set(id, { resolve, reject });
+      ws.send(JSON.stringify({ id, method, params }));
+    });
+  }
+  async function navigate(url) {
+    const loaded = new Promise((r) => { loadResolve = r; });
+    await send('Page.navigate', { url });
+    await Promise.race([loaded, sleep(8000)]);
+    await sleep(1200); // let the app fetch its data and render
+  }
+
+  await send('Page.enable');
+  await send('Emulation.setDeviceMetricsOverride', { width: 1280, height: 800, deviceScaleFactor: 1, mobile: false });
+
+  for (const shot of shots) {
+    const url = `http://localhost:8080${shot.url}`;
+    await navigate(url);
+    const { data } = await send('Page.captureScreenshot', { format: 'jpeg', quality: 80 });
+    const file = join(outDir, shot.file);
+    writeFileSync(file, Buffer.from(data, 'base64'));
+    const size = statSync(file).size;
+    console.log(`${shot.file}: ${size} bytes (${url})`);
+    if (size > 262144) throw new Error(`${shot.file} is ${size} bytes, over the 256 KiB cap`);
+  }
+  console.log(`took ${shots.length} screenshots`);
+} finally {
+  chrome.kill('SIGTERM');
+}
