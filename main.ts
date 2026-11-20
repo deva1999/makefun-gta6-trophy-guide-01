@@ -1,24 +1,25 @@
-// Leonida Trophy Compass — a gta6-trophy-guide-01 entry (Node 22, stdlib only).
-//
-// The guide itself is app/: plain static files a browser opens at
-// app/index.html (ES module, CSS, JSON data, no build step), working offline
-// with zero network requests. This program hands it in: it copies app/ and
-// screenshots/ from beside this file into /output and writes
-// /output/dossier.json with the vendored make.fun library, exactly as the kit
-// requires. vendor/makefun-frontend.ts is the kit's copy, unchanged — the
-// scorer rebuilds the dossier from its own copy and compares byte for byte.
-//
-// Run it locally with:
+// Leonida Platinum Atlas — a GTA 6 trophy guide and offline tracker (Node 22, stdlib only).
+// This program hands the guide in: it copies app/ and screenshots/ from beside this
+// file to /output and writes /output/dossier.json with the vendored make.fun library.
+// vendor/makefun-frontend.ts is the kit's copy, byte for byte — leave it alone.
+// Outside the grader, MAKEFUN_OUTPUT_DIR stands in for /output:
 //   mkdir -p out && MAKEFUN_OUTPUT_DIR=out node main.ts
-// Serve the guide while building with `node serve.ts` (http://localhost:8080).
 
-import { cpSync, existsSync, mkdirSync, writeFileSync } from 'node:fs';
+import { cpSync, existsSync, mkdirSync, readFileSync, writeFileSync } from 'node:fs';
 import { join } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { buildDossier } from './vendor/makefun-frontend.ts';
 
 const repoRoot = fileURLToPath(new URL('.', import.meta.url));
 const outputDir = process.env.MAKEFUN_OUTPUT_DIR ?? '/output';
+
+// The guide is only worth handing in with all 55 trophies present and guided,
+// so refuse to build a dossier from a trophy file that lost one.
+const trophyFile = JSON.parse(readFileSync(join(repoRoot, 'app', 'data', 'trophies.json'), 'utf8'));
+const guided = trophyFile.trophies.filter((t) => typeof t.guide === 'string' && t.guide.trim().length > 0);
+if (trophyFile.trophies.length !== 55 || guided.length !== 55) {
+  throw new Error(`trophies.json must hold 55 guided trophies, found ${trophyFile.trophies.length} trophies and ${guided.length} guides`);
+}
 
 mkdirSync(outputDir, { recursive: true });
 cpSync(join(repoRoot, 'app'), join(outputDir, 'app'), { recursive: true });
@@ -27,15 +28,16 @@ if (existsSync(join(repoRoot, 'screenshots'))) {
   cpSync(join(repoRoot, 'screenshots'), join(outputDir, 'screenshots'), { recursive: true });
 }
 
-// The scorer's caps, as the kit's starter passes them: the dossier text is
-// capped at 163,840 bytes; at most 4 screenshots of 262,144 bytes each; app/
-// at most 993 files and directories and 48 MiB in all.
+// The scorer's own caps (reference/gate.json): only text_max_bytes shapes the bytes;
+// the others refuse an entry the scorer would refuse (more than 4 screenshots or one
+// over 256 KiB; more than 993 files and directories in app/ or 48 MiB of app files).
 writeFileSync(
   join(outputDir, 'dossier.json'),
-  buildDossier(outputDir, {
-    text_max_bytes: 163840,
-    screenshots: { max: 4, max_bytes: 262144 },
-    app_max_files: 993,
-    app_max_bytes: 50331648,
-  }),
+  buildDossier(outputDir, { text_max_bytes: 163840, screenshots: { max: 4, max_bytes: 262144 }, app_max_files: 993, app_max_bytes: 50331648 }),
 );
+
+console.log(`Leonida Platinum Atlas: handed in ${guided.length} guided trophies.`);
+
+// Say how big the hand-in is, so a bad run is obvious before anyone submits it.
+const dossierBytes = readFileSync(join(outputDir, 'dossier.json')).length;
+console.log(`dossier.json: ${dossierBytes} bytes (cap 1.5 MiB).`);
