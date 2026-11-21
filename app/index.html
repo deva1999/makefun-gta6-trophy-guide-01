@@ -1,109 +1,217 @@
 <!doctype html>
 <html lang="en">
 <head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Leonida Platinum Fieldbook — all 55 GTA 6 trophies</title>
-<meta name="description" content="An offline tracker and cited guide for all 55 Grand Theft Auto VI trophies: 8-stage roadmap to the platinum, missable flags, spoiler-safe checklist.">
-<link rel="stylesheet" href="style.css">
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Leonida Platinum Fieldbook — all 55 GTA 6 trophies</title>
+  <meta
+    name="description"
+    content="An offline tracker and cited guide for all 55 Grand Theft Auto VI trophies: 8-stage roadmap to the platinum, missable flags, spoiler-safe checklist.">
+  <link rel="stylesheet" href="style.css">
 </head>
 <body>
-<header class="masthead">
-  <div class="masthead-text">
-    <p class="eyebrow">Grand Theft Auto VI &middot; PlayStation 5 &middot; The official 55 trophies, 2026-11-18</p>
-    <h1>Leonida Platinum Fieldbook</h1>
-    <p class="subtitle">Every trophy, its official name and grade, a guide in our own words with its source cited beside the text, and an 8-stage roadmap to the platinum — as an offline checklist that saves in your browser.</p>
-  </div>
-  <section class="progress-card" aria-label="Progress to platinum">
-    <p class="progress-big"><span id="earnedCount">0</span><span class="progress-of">/ 55 earned</span></p>
-    <div class="progress-bar" role="progressbar" aria-label="Trophies earned"><div id="progressFill" class="progress-fill"></div></div>
-    <p id="progressPct" class="progress-pct">0% to platinum</p>
-    <ul id="gradeCounts" class="grade-counts"></ul>
-    <p id="stageCounts" class="stage-counts"></p>
-  </section>
-</header>
-
-<aside class="missable-banner" role="note">
-  <strong>One trophy can be missed.</strong>
-  <span><b>Positive Mental Attitude</b> — one meditation spot, on Lucia&rsquo;s balcony, is only reachable in Chapter 1. Meditate there before Chapter 1 ends, and keep a manual save from Chapter 1 until it pops. There is no mission replay and no New Game+. No other missable has been confirmed — see <a href="#missables">Missables</a>.</span>
-</aside>
-
-<nav class="tabs" aria-label="Guide sections">
-  <button type="button" data-view="tracker" class="tab active">Tracker</button>
-  <button type="button" data-view="roadmap" class="tab">Roadmap to Platinum</button>
-  <button type="button" data-view="missables" class="tab">Missables</button>
-  <button type="button" data-view="sources" class="tab">Sources &amp; Method</button>
-</nav>
-
-<main>
-  <section id="view-tracker" class="view">
-    <div class="controls">
-      <label class="search">Search <input id="search" type="search" placeholder="Trophy name or mission&hellip;" autocomplete="off"></label>
-      <div id="kindPills" class="pills" role="group" aria-label="Filter by kind"></div>
-      <label class="grade">Grade
-        <select id="grade">
-          <option value="all">All grades</option>
-          <option value="platinum">Platinum</option>
-          <option value="gold">Gold</option>
-          <option value="silver">Silver</option>
-          <option value="bronze">Bronze</option>
-        </select>
-      </label>
-      <label class="toggle"><input id="spoiler" type="checkbox"> Spoiler-safe <span class="toggle-note">hide the 28 hidden story trophies until earned</span></label>
-      <label class="toggle"><input id="earnedOnly" type="checkbox"> Earned only</label>
-      <span class="spacer"></span>
-      <button id="exportBtn" type="button">Export progress</button>
-      <label class="import-btn">Import progress <input id="importFile" type="file" accept="application/json"></label>
-      <button id="resetBtn" type="button">Reset</button>
+  <header class="masthead">
+    <div class="masthead-text">
+      <p class="eyebrow">
+        Grand Theft Auto VI &middot; PlayStation 5 &middot; The official 55 trophies, 2026-11-18
+      </p>
+      <h1>Leonida Platinum Fieldbook</h1>
+      <p class="subtitle">
+        Every trophy, its official name and grade, a guide in our own words with its source
+        cited beside the text, and an 8-stage roadmap to the platinum — as an offline checklist
+        that saves in your browser.
+      </p>
     </div>
-    <p id="listMeta" class="list-meta"></p>
-    <div class="tracker-grid">
-      <ol id="trophyList" class="trophy-list"></ol>
-      <aside id="detail" class="detail" aria-live="polite"></aside>
-    </div>
-  </section>
+    <section class="progress-card" aria-label="Progress to platinum">
+      <p class="progress-big">
+        <span id="earnedCount">0</span><span class="progress-of">/ 55 earned</span>
+      </p>
+      <div class="progress-bar" role="progressbar" aria-label="Trophies earned">
+        <div id="progressFill" class="progress-fill"></div>
+      </div>
+      <p id="progressPct" class="progress-pct">0% to platinum</p>
+      <ul id="gradeCounts" class="grade-counts"></ul>
+      <p id="stageCounts" class="stage-counts"></p>
+    </section>
+  </header>
 
-  <section id="view-roadmap" class="view" hidden>
-    <p class="roadmap-warn" role="note"><strong>Watch stage 1 first.</strong> Positive Mental Attitude has the one spot that can be missed — Lucia&rsquo;s balcony, reachable only in Chapter 1. Meditate there before Chapter 1 ends and keep a Chapter 1 manual save. No other missable has been confirmed.</p>
-    <p class="section-intro">Eight stages, in play order, built from the official trophy descriptions. Story first, strangers second, then collectibles, activities, robberies and money — the open-world oddities and the platinum last.</p>
-    <ol id="roadmapStages" class="roadmap"></ol>
-  </section>
+  <aside class="missable-banner" role="note">
+    <strong>One trophy can be missed.</strong>
+    <span>
+      <b>Positive Mental Attitude</b> — one meditation spot, on Lucia&rsquo;s balcony, is only
+      reachable in Chapter 1. Meditate there before Chapter 1 ends, and keep a manual save from
+      Chapter 1 until it pops. There is no mission replay and no New Game+. No other missable
+      has been confirmed — see <a href="#missables">Missables</a>.
+    </span>
+  </aside>
 
-  <section id="view-missables" class="view" hidden>
-    <h2>Missables</h2>
-    <p class="section-intro">One trophy is potentially missable. Everything else can be finished after the story, in free roam, at your own pace.</p>
-    <div id="missableList" class="missable-list"></div>
-    <h3>Ground rules for a clean run</h3>
-    <ul class="rules-list">
-      <li><strong>Keep manual saves.</strong> Save at every chapter boundary, and keep a Chapter 1 save until Positive Mental Attitude pops. There is no mission replay and no New Game+ to go back with.</li>
-      <li><strong>Never use cheats on your trophy save.</strong> PowerPyx reports that turning on a cheat disables trophies, and GameSpot and PC Gamer add that you cannot save afterwards. Rockstar has published nothing on GTA 6 cheats — this is reported, not confirmed — but the GTA 5 precedent (Rockstar Support: codes temporarily disabled trophies) says the same thing.</li>
-      <li><strong>Do not trust a missable list beyond this one.</strong> PlanetGTA6, 2026-11-19: &ldquo;We can&rsquo;t tell yet&hellip; no reliable list of missable trophies so far.&rdquo; Any other trophy claimed as missable is unconfirmed.</li>
-    </ul>
-  </section>
+  <nav class="tabs" aria-label="Guide sections">
+    <button type="button" data-view="tracker" class="tab active">Tracker</button>
+    <button type="button" data-view="roadmap" class="tab">Roadmap to Platinum</button>
+    <button type="button" data-view="missables" class="tab">Missables</button>
+    <button type="button" data-view="sources" class="tab">Sources &amp; Method</button>
+  </nav>
 
-  <section id="view-sources" class="view" hidden>
-    <h2>Sources &amp; method</h2>
-    <p class="section-intro">Every guide in this fieldbook is written in our own words. A source is cited beside each fact it supports — never copied. Where the sources disagree or are silent, the guide says so instead of asserting.</p>
-    <table class="sources-table">
-      <thead><tr><th>Source</th><th>Used for</th></tr></thead>
-      <tbody id="sourcesBody"></tbody>
-    </table>
-    <h3>Honesty notes</h3>
-    <ul class="rules-list">
-      <li><strong>No Rockstar-published list.</strong> Rockstar and Sony have never published an official trophy list for GTA 6. The 55 names, descriptions and grades here are the PlayStation list as published on Exophase on 2026-11-18, cross-checked with PSNProfiles and TrueAchievements.</li>
-      <li><strong>Hidden flags</strong> follow the visible / hidden split published by PlanetGTA6: 27 visible, 28 hidden. The 28 hidden trophies are the story chapters, the named missions, the stranger finales and the spoiler-y open-world moments.</li>
-      <li><strong>100% completion is unpublished.</strong> Rockstar has not said what A Long Road&rsquo;s 100% covers. The in-game stats page is the checklist; any claimed task list (including a circulating &ldquo;35-task&rdquo; figure) is unverified.</li>
-      <li><strong>Times are estimates.</strong> Reviews put the story at about 60 hours; the road to platinum is commonly estimated near 200 hours. Both are estimates, never facts.</li>
-      <li><strong>Counts come from PSN.</strong> Where a trophy has a number — 250 stunts, 42 shooting-range golds, 100 WAiNK It locations, 18 meditation spots, 8 stranger strands, 3 card sets, 5 vaults, 50 challenges, 20 races, 100 vehicles, 52 areas, 9 gangs, 8 garages — the number is PSN&rsquo;s published progress target.</li>
-      <li><strong>Unconfirmed triggers are labelled.</strong> A few trophies have deliberately vague official descriptions (Personal Best, Actions Speak Louder, Bad Luck I Guess, The Truth Is Out There, Challenging Tank, Catch Me If You Can). Their guides say the trigger is not yet confirmed instead of inventing one.</li>
-    </ul>
-  </section>
-</main>
+  <main>
+    <section id="view-tracker" class="view">
+      <div class="controls">
+        <label class="search">
+          Search
+          <input
+            id="search"
+            type="search"
+            placeholder="Trophy name or mission&hellip;"
+            autocomplete="off">
+        </label>
+        <div id="kindPills" class="pills" role="group" aria-label="Filter by kind"></div>
+        <label class="grade">
+          Grade
+          <select id="grade">
+            <option value="all">All grades</option>
+            <option value="platinum">Platinum</option>
+            <option value="gold">Gold</option>
+            <option value="silver">Silver</option>
+            <option value="bronze">Bronze</option>
+          </select>
+        </label>
+        <label class="toggle">
+          <input id="spoiler" type="checkbox">
+          Spoiler-safe
+          <span class="toggle-note">hide the 28 hidden story trophies until earned</span>
+        </label>
+        <label class="toggle">
+          <input id="earnedOnly" type="checkbox">
+          Earned only
+        </label>
+        <span class="spacer"></span>
+        <button id="exportBtn" type="button">Export progress</button>
+        <label class="import-btn">
+          Import progress
+          <input id="importFile" type="file" accept="application/json">
+        </label>
+        <button id="resetBtn" type="button">Reset</button>
+      </div>
+      <p id="listMeta" class="list-meta"></p>
+      <div class="tracker-grid">
+        <ol id="trophyList" class="trophy-list"></ol>
+        <aside id="detail" class="detail" aria-live="polite"></aside>
+      </div>
+    </section>
 
-<footer>
-  <p>Leonida Platinum Fieldbook — an offline, open-source guide. Works with the network off; nothing here fetches anything. Trophy names and descriptions are PlayStation&rsquo;s, as published 2026-11-18; the guides are our own words. No Rockstar logo or artwork is used anywhere.</p>
-  <p><a href="https://make.fun/bounty/gta6-trophy-guide-01">Entered on make.fun</a> &middot; Built by an AI agent for the &ldquo;Build the best GTA 6 trophy guide&rdquo; bounty.</p>
-</footer>
-<script type="module" src="app.js"></script>
+    <section id="view-roadmap" class="view" hidden>
+      <p class="roadmap-warn" role="note">
+        <strong>Watch stage 1 first.</strong>
+        Positive Mental Attitude has the one spot that can be missed — Lucia&rsquo;s balcony,
+        reachable only in Chapter 1. Meditate there before Chapter 1 ends and keep a Chapter 1
+        manual save. No other missable has been confirmed.
+      </p>
+      <p class="section-intro">
+        Eight stages, in play order, built from the official trophy descriptions. Story first,
+        strangers second, then collectibles, activities, robberies and money — the open-world
+        oddities and the platinum last.
+      </p>
+      <ol id="roadmapStages" class="roadmap"></ol>
+    </section>
+
+    <section id="view-missables" class="view" hidden>
+      <h2>Missables</h2>
+      <p class="section-intro">
+        One trophy is potentially missable. Everything else can be finished after the story,
+        in free roam, at your own pace.
+      </p>
+      <div id="missableList" class="missable-list"></div>
+      <h3>Ground rules for a clean run</h3>
+      <ul class="rules-list">
+        <li>
+          <strong>Keep manual saves.</strong>
+          Save at every chapter boundary, and keep a Chapter 1 save until Positive Mental
+          Attitude pops. There is no mission replay and no New Game+ to go back with.
+        </li>
+        <li>
+          <strong>Never use cheats on your trophy save.</strong>
+          PowerPyx reports that turning on a cheat disables trophies, and GameSpot and PC Gamer
+          add that you cannot save afterwards. Rockstar has published nothing on GTA 6 cheats —
+          this is reported, not confirmed — but the GTA 5 precedent (Rockstar Support: codes
+          temporarily disabled trophies) says the same thing.
+        </li>
+        <li>
+          <strong>Do not trust a missable list beyond this one.</strong>
+          PlanetGTA6, 2026-11-19: &ldquo;We can&rsquo;t tell yet&hellip; no reliable list of
+          missable trophies so far.&rdquo; Any other trophy claimed as missable is unconfirmed.
+        </li>
+      </ul>
+    </section>
+
+    <section id="view-sources" class="view" hidden>
+      <h2>Sources &amp; method</h2>
+      <p class="section-intro">
+        Every guide in this fieldbook is written in our own words. A source is cited beside
+        each fact it supports — never copied. Where the sources disagree or are silent, the
+        guide says so instead of asserting.
+      </p>
+      <table class="sources-table">
+        <thead>
+          <tr>
+            <th>Source</th>
+            <th>Used for</th>
+          </tr>
+        </thead>
+        <tbody id="sourcesBody"></tbody>
+      </table>
+      <h3>Honesty notes</h3>
+      <ul class="rules-list">
+        <li>
+          <strong>No Rockstar-published list.</strong>
+          Rockstar and Sony have never published an official trophy list for GTA 6. The 55
+          names, descriptions and grades here are the PlayStation list as published on Exophase
+          on 2026-11-18, cross-checked with PSNProfiles and TrueAchievements.
+        </li>
+        <li>
+          <strong>Hidden flags</strong>
+          follow the visible / hidden split published by PlanetGTA6: 27 visible, 28 hidden.
+          The 28 hidden trophies are the story chapters, the named missions, the stranger
+          finales and the spoiler-y open-world moments.
+        </li>
+        <li>
+          <strong>100% completion is unpublished.</strong>
+          Rockstar has not said what A Long Road&rsquo;s 100% covers. The in-game stats page is
+          the checklist; any claimed task list (including a circulating &ldquo;35-task&rdquo;
+          figure) is unverified.
+        </li>
+        <li>
+          <strong>Times are estimates.</strong>
+          Reviews put the story at about 60 hours; the road to platinum is commonly estimated
+          near 200 hours. Both are estimates, never facts.
+        </li>
+        <li>
+          <strong>Counts come from PSN.</strong>
+          Where a trophy has a number — 250 stunts, 42 shooting-range golds, 100 WAiNK It
+          locations, 18 meditation spots, 8 stranger strands, 3 card sets, 5 vaults, 50
+          challenges, 20 races, 100 vehicles, 52 areas, 9 gangs, 8 garages — the number is
+          PSN&rsquo;s published progress target.
+        </li>
+        <li>
+          <strong>Unconfirmed triggers are labelled.</strong>
+          A few trophies have deliberately vague official descriptions (Personal Best, Actions
+          Speak Louder, Bad Luck I Guess, The Truth Is Out There, Challenging Tank, Catch Me If
+          You Can). Their guides say the trigger is not yet confirmed instead of inventing one.
+        </li>
+      </ul>
+    </section>
+  </main>
+
+  <footer>
+    <p>
+      Leonida Platinum Fieldbook — an offline, open-source guide. Works with the network off;
+      nothing here fetches anything. Trophy names and descriptions are PlayStation&rsquo;s, as
+      published 2026-11-18; the guides are our own words. No Rockstar logo or artwork is used
+      anywhere.
+    </p>
+    <p>
+      <a href="https://make.fun/bounty/gta6-trophy-guide-01">Entered on make.fun</a>
+      &middot; Built by an AI agent for the &ldquo;Build the best GTA 6 trophy guide&rdquo; bounty.
+    </p>
+  </footer>
+  <script type="module" src="app.js"></script>
 </body>
 </html>
