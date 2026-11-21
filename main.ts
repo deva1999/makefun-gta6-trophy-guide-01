@@ -10,13 +10,35 @@
 // Outside the grader's container, MAKEFUN_OUTPUT_DIR stands in for /output:
 //   mkdir -p out && MAKEFUN_OUTPUT_DIR=out node main.ts
 
-import { cpSync, existsSync, mkdirSync, readdirSync, statSync, writeFileSync } from 'node:fs';
+import { cpSync, existsSync, mkdirSync, readdirSync, readFileSync, statSync, writeFileSync } from 'node:fs';
 import { join } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { buildDossier } from './vendor/makefun-frontend.ts';
 
 const here = fileURLToPath(new URL('.', import.meta.url));
 const out = process.env.MAKEFUN_OUTPUT_DIR ?? '/output';
+
+// V2 gate: refuse to hand in a bundle whose trophy file is short a
+// trophy, a guide, or a citation. Every guide must name its source
+// beside the text, so a trophy with no source is a broken entry.
+function checkTrophies() {
+  const doc = JSON.parse(readFileSync(join(here, 'app', 'data', 'trophies.json'), 'utf8'));
+  const list = doc.trophies;
+  if (!Array.isArray(list) || list.length !== 55) {
+    throw new Error(`expected 55 trophies, found ${Array.isArray(list) ? list.length : 'none'}`);
+  }
+  const names = new Set();
+  for (const t of list) {
+    if (typeof t.name !== 'string' || !t.name.trim()) throw new Error('a trophy has no name');
+    if (names.has(t.name)) throw new Error(`duplicate trophy name: ${t.name}`);
+    names.add(t.name);
+    if (typeof t.guide !== 'string' || !t.guide.trim()) throw new Error(`trophy ${t.name} has no guide`);
+    if (!Array.isArray(t.sources) || t.sources.length === 0) throw new Error(`trophy ${t.name} cites no source`);
+    if (!Array.isArray(t.steps) || t.steps.length === 0) throw new Error(`trophy ${t.name} has no steps`);
+  }
+  console.log(`trophies checked: 55, each with a guide, steps and at least one cited source`);
+}
+checkTrophies();
 
 function countEntries(dir) {
   let total = 0;
@@ -52,8 +74,9 @@ if (countEntries(join(here, 'app')) > 993) {
 
 // The scorer's own caps (reference/gate.json): only text_max_bytes shapes
 // the bytes; the others refuse an entry the scorer would refuse.
+const dossierPath = join(out, 'dossier.json');
 writeFileSync(
-  join(out, 'dossier.json'),
+  dossierPath,
   buildDossier(out, {
     text_max_bytes: 163840,
     screenshots: { max: 4, max_bytes: 262144 },
@@ -61,4 +84,6 @@ writeFileSync(
     app_max_bytes: 50331648,
   }),
 );
-console.log(`handed in ${shots.length} screenshots, dossier written to ${join(out, 'dossier.json')}`);
+const dossierSize = statSync(dossierPath).size;
+if (dossierSize > 1572864) throw new Error(`dossier.json is ${dossierSize} bytes, over the 1.5 MiB cap`);
+console.log(`handed in ${shots.length} screenshots, dossier written to ${dossierPath} (${dossierSize} bytes, app/ ${countEntries(join(here, 'app'))} entries)`);

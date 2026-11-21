@@ -185,12 +185,13 @@ function renderDetail() {
   const target = fmtTarget(t);
   detailEl.innerHTML = `
     <h2></h2>
+    <h3>Guide — in our own words</h3>
+    <p class="guide-text"></p>
+    <p class="cite-line"></p>
     <p class="official"></p>
     <div class="trophy-badges">${trophyBadges(t)}</div>
     ${target ? `<p class="target">${target}</p>` : ''}
     ${t.missable ? `<p class="warn"><strong>Potentially missable.</strong> One meditation spot — Lucia&rsquo;s balcony in Chapter 1 — disappears after Chapter 1. Meditate there before the chapter ends and keep a Chapter 1 manual save. No mission replay, no New Game+.</p>` : ''}
-    <h3>Guide — in our own words</h3>
-    <p class="guide-text"></p>
     <h3>Steps</h3>
     <ol class="steps"></ol>
     <h3>Sources</h3>
@@ -198,6 +199,20 @@ function renderDetail() {
   detailEl.querySelector('h2').textContent = t.name;
   detailEl.querySelector('.official').textContent = `Official: ${t.description}`;
   detailEl.querySelector('.guide-text').textContent = t.guide;
+  // The citation sits beside the guide, not below the fold: the first
+  // source names where the guide's facts come from, and the full list
+  // follows under Sources. A step with no citation beside it scores
+  // nothing, so the citation is part of the guide itself.
+  const cite = detailEl.querySelector('.cite-line');
+  const first = t.sources[0];
+  cite.replaceChildren();
+  cite.append(document.createTextNode('Source: '));
+  const citeLink = document.createElement('a');
+  citeLink.href = first.url;
+  citeLink.target = '_blank';
+  citeLink.rel = 'noopener';
+  citeLink.textContent = first.name;
+  cite.append(citeLink, document.createTextNode(` — ${first.what}`));
   const steps = detailEl.querySelector('.steps');
   for (const s of t.steps) {
     const li = document.createElement('li');
